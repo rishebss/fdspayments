@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <title>Student Payment Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #000000;
+            --foreground: #ffffff;
+            
+            --card: #1c1c1c;
+            --card-foreground: #ffffff;
+            
+            --popover: #1c1c1c;
+            --popover-foreground: #ffffff;
+            
+            --primary: #ffffff;
+            --primary-foreground: #000000;
+            
+            --secondary: #1c1c1c;
+            --secondary-foreground: #ffffff;
+            
+            --muted: #26252a;
+            --muted-foreground: #a1a1aa;
+            
+            --accent: #8a8a91;
+            --accent-foreground: #ffffff;
+            
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            
+            --border: #26252a;
+            --input: #26252a;
+            --ring: #ffffff;
+            
+            --radius: 0.75rem;
+            --glow: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--foreground);
+            line-height: 1.4;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            padding: 40px;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                gap: 40px;
+                padding: 30px;
+            }
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 0;
+            animation: heroSlideIn 0.8s ease-out;
+        }
+
+        .search-container {
+            background: linear-gradient(135deg, var(--card), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 24px;
+            padding: clamp(32px, 4vw, 48px);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 25px 50px -12px rgba(0, 0, 0, 0.4),
+                0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: visible;
+            backdrop-filter: blur(20px);
+            animation: searchSlideIn 0.8s ease-out 0.3s both;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes heroSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes searchSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+
+        @keyframes containerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+
+        .hero-title {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShimmer 3s ease-in-out infinite;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: var(--muted-foreground);
+            margin-bottom: 32px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .hero-description {
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            color: var(--muted-foreground);
+            margin-bottom: 40px;
+            line-height: 1.7;
+            max-width: 500px;
+        }
+
+        .hero-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+
+        .search-title {
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShimmer 3s ease-in-out infinite;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes titleShimmer {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes titleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-form {
+            position: relative;
+            margin-bottom: clamp(16px, 3vw, 24px);
+            z-index: 100;
+        }
+
+        @keyframes searchSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-box { 
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 20px;
+            z-index: 2;
+        }
+
+        input[type="text"] { 
+            width: 100%;
+            padding: clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 20px) clamp(12px, 2.5vw, 16px) clamp(50px, 8vw, 60px);
+            background: linear-gradient(135deg, var(--muted), var(--secondary));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            color: var(--foreground);
+            transition: all 0.3s ease;
+            outline: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="text"]:focus {
+            border-color: #10b981;
+            box-shadow: 
+                0 0 0 2px rgba(16, 185, 129, 0.2),
+                0 6px 16px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-results { 
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 
+                0 20px 40px -12px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-results::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .search-results::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 4px;
+        }
+
+        .student-item { 
+            padding: clamp(12px, 2.5vw, 16px);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: itemSlideIn 0.4s ease-out both;
+        }
+
+        @keyframes itemSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .student-item:hover { 
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            transform: translateX(4px);
+            box-shadow: 
+                0 4px 12px rgba(16, 185, 129, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-name {
+            font-weight: 600;
+            font-size: clamp(14px, 2.5vw, 16px);
+            color: var(--foreground);
+            margin-bottom: 6px;
+        }
+
+        .student-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(8px, 2vw, 12px);
+            color: var(--muted-foreground);
+            font-size: clamp(11px, 2vw, 13px);
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .error { 
+            background: linear-gradient(135deg, var(--error-bg), rgba(239, 68, 68, 0.1));
+            color: #fca5a5;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--error);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .success { 
+            background: linear-gradient(135deg, var(--success-bg), rgba(16, 185, 129, 0.1));
+            color: #6ee7b7;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-info {
+            background: linear-gradient(135deg, var(--muted), var(--secondary));
+            padding: clamp(16px, 3vw, 24px);
+            border-radius: 16px;
+            margin: clamp(12px, 3vw, 20px) 0;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            animation: infoSlideIn 0.8s ease-out 0.8s both;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 6px 24px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes infoSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .student-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #10b981, #059669);
+            animation: accentSlideIn 1s ease-out 1s both;
+        }
+
+        @keyframes accentSlideIn {
+            from {
+                height: 0;
+            }
+            to {
+                height: 100%;
+            }
+        }
+
+        .student-info h3 {
+            font-size: clamp(16px, 3vw, 18px);
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(8px, 2vw, 12px);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: clamp(11px, 2vw, 13px);
+            color: var(--muted-foreground);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: clamp(13px, 2.5vw, 15px);
+            color: var(--foreground);
+            font-weight: 600;
+        }
+
+        .payment-form {
+            text-align: center;
+            margin-top: clamp(16px, 3vw, 24px);
+            animation: formSlideIn 0.8s ease-out 1.2s both;
+        }
+
+        @keyframes formSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button { 
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: clamp(10px, 2.5vw, 14px) clamp(20px, 4vw, 28px);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: clamp(13px, 2.5vw, 15px);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(6px, 1.5vw, 10px);
+            box-shadow: 
+                0 3px 10px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            height: 50px;
+        }
+
+        
+
+        button i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover i {
+            transform: translateX(-2px);
+        }
+
+        
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .no-results {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+                min-height: auto;
+                align-items: start;
+            }
+
+            .hero-section {
+                text-align: center;
+                padding: 0;
+                order: 1;
+            }
+
+            .search-container {
+                order: 2;
+            }
+
+            .hero-description {
+                max-width: 100%;
+            }
+
+            .hero-features {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .main-container {
+                padding: 16px;
+                gap: 16px;
+                min-height: auto;
+                align-items: start;
+                margin-top: -300px;
+            }
+
+            .hero-section {
+                padding: 0;
+                margin-bottom: 50px;
+            }
+
+            .hero-title {
+                font-size: clamp(1.8rem, 7vw, 2.5rem);
+                margin-bottom: 12px;
+                text-align: left;
+            }
+
+            .hero-subtitle {
+                font-size: clamp(1rem, 4vw, 1.1rem);
+                margin-bottom: 16px;
+                text-align: left;
+            }
+
+            .hero-description {
+                font-size: clamp(0.9rem, 3vw, 1rem);
+                margin-bottom: 16px;
+                line-height: 1.6;
+                text-align: left;
+            }
+
+            .hero-features {
+                margin-bottom: 16px;
+                margin-top: 20px;
+                gap: 12px;
+            }
+
+            .feature-item {
+                font-size: 13px;
+                gap: 10px;
+            }
+
+            .feature-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 9px;
+            }
+
+            .search-container {
+                padding: 20px;
+                border-radius: 16px;
+                margin-top: 0;
+            }
+
+            .search-title {
+                font-size: clamp(1.2rem, 5vw, 1.5rem);
+                margin-bottom: 16px;
+            }
+
+            .student-details {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-results {
+                max-height: 200px;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .main-container {
+                padding: 12px;
+                gap: 12px;
+                min-height: auto;
+                align-items: start;
+            }
+
+            .hero-section {
+                padding: 0;
+            }
+
+            .hero-title {
+                font-size: clamp(1.5rem, 8vw, 2rem);
+                margin-bottom: 8px;
+                text-align: left;
+            }
+
+            .hero-subtitle {
+                font-size: clamp(0.9rem, 4vw, 1rem);
+                margin-bottom: 12px;
+                text-align: left;
+            }
+
+            .hero-description {
+                font-size: clamp(0.85rem, 3vw, 0.95rem);
+                margin-bottom: 12px;
+                line-height: 1.5;
+            }
+
+            .hero-features {
+                margin-bottom: 12px;
+                gap: 10px;
+            }
+
+            .feature-item {
+                font-size: 12px;
+                gap: 8px;
+            }
+
+            .feature-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 8px;
+            }
+
+            .search-container {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .search-title {
+                font-size: clamp(1.1rem, 5vw, 1.3rem);
+                margin-bottom: 12px;
+            }
+
+            .search-results {
+                max-height: 150px;
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">FDS Payment Portal</h1>
+            <p class="hero-subtitle">Streamlined Student Fee Management</p>
+            <p class="hero-description">
+                Experience the future of educational payment processing. Our advanced platform 
+                provides secure, fast, and reliable payment solutions for students and institutions.
+            </p>
+            
+            <div class="hero-features">
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <span>Lightning-fast payment processing</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-mobile-alt"></i>
+                    </div>
+                    <span>Mobile-optimized for all devices</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <span>Instant receipt generation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-container">
+            <h2 class="search-title">Select Student</h2>
+            
+            <!-- CSRF Token for AJAX requests -->
+            {% csrf_token %}
+            
+            <div id="errorContainer">
+                {% if error %}
+                <div class="error">
+                    <span>❌</span>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="search-form">
+                <div class="search-box">
+                    <div class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <input type="text" id="studentSearch" placeholder="Search student by name...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+            </div>
+            
+            <div id="selectedStudent" class="student-info hidden">
+                <h3>Selected Student</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Name</div>
+                        <div class="info-value" id="selectedName"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value" id="selectedPhone"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" id="selectedEmail"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="paymentForm" class="payment-form hidden">
+                <button type="button" id="payButton">
+                    <i class="fa-solid fa-credit-card"></i>
+                    Pay Now (₹2,000)
+                </button>
+                <p class="loading" id="loadingText" style="display: none;">Opening payment gateway...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('studentSearch');
+        const searchResults = document.getElementById('searchResults');
+        const paymentForm = document.getElementById('paymentForm');
+        const selectedStudent = document.getElementById('selectedStudent');
+        const selectedName = document.getElementById('selectedName');
+        const selectedPhone = document.getElementById('selectedPhone');
+        const selectedEmail = document.getElementById('selectedEmail');
+        
+        if (!searchInput) {
+            console.error('Could not find search input element');
+            return;
+        }
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.search-container')) {
+                searchResults.style.display = 'none';
+            }
+        });
+        
+        searchInput.addEventListener('input', debounce(function(event) {
+            const query = event.target.value.trim();
+            
+            console.log('Input value:', query);
+            
+            if (query.length < 2) {
+                console.log('Query too short:', query);
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            // Show loading state
+            searchResults.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            searchResults.style.display = 'block';
+            
+            console.log('Sending search request for:', query);
+            const url = `/search-students/?name=${encodeURIComponent(query)}`;
+            console.log('Request URL:', url);
+            
+            fetch(url)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        displayResults(data.data);
+                    } else {
+                        searchResults.innerHTML = `<div class="error"><span>❌</span><span>${data.error}</span></div>`;
+                        searchResults.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    searchResults.innerHTML = '<div class="error"><span>❌</span><span>Search failed. Please try again.</span></div>';
+                    searchResults.style.display = 'block';
+                });
+        }, 300));
+        
+        function displayResults(students) {
+            console.log('Displaying results:', students);
+            if (students.length === 0) {
+                console.log('No students found');
+                searchResults.innerHTML = '<div class="no-results">🔍 No students found matching your search</div>';
+                searchResults.style.display = 'block';
+                return;
+            }
+            
+            searchResults.innerHTML = students.map(student => {
+                console.log('Processing student:', student);
+                return `
+                    <div class="student-item" data-id="${student.id}" 
+                         data-name="${student.name}" 
+                         data-phone="${student.phone || 'N/A'}" 
+                         data-email="${student.email || 'N/A'}">
+                        <div class="student-name">${student.name}</div>
+                        <div class="student-details">
+                            <div class="detail-item">
+                                <span><i class="fa-solid fa-phone"></i> </span>
+                                <span>${student.phone || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span><i class="fa-solid fa-envelope"></i> </span>
+                                <span>${student.email || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span><i class="fa-solid fa-chart-line"></i> </span>
+                                <span>${student.level || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span><i class="fa-solid fa-clock"></i></span>
+                                <span>${student.batch || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            console.log('Search results HTML:', searchResults.innerHTML);
+            searchResults.style.display = 'block';
+            
+            // Add click listeners with smooth transitions
+            document.querySelectorAll('.student-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    console.log('Student item clicked:', this.getAttribute('data-id'));
+                    const studentId = this.getAttribute('data-id');
+                    const studentName = this.getAttribute('data-name');
+                    const studentPhone = this.getAttribute('data-phone');
+                    const studentEmail = this.getAttribute('data-email');
+                    
+                    // Store student data for Razorpay integration
+                    currentStudentId = studentId;
+                    currentStudentData = {
+                        id: studentId,
+                        name: studentName,
+                        phone: studentPhone,
+                        email: studentEmail
+                    };
+                    
+                    selectedName.textContent = studentName;
+                    selectedPhone.textContent = studentPhone;
+                    selectedEmail.textContent = studentEmail;
+                    
+                    // Smooth reveal animations
+                    setTimeout(() => {
+                        paymentForm.classList.remove('hidden');
+                        selectedStudent.classList.remove('hidden');
+                    }, 100);
+                    
+                    searchResults.style.display = 'none';
+                    searchInput.value = studentName;
+                    
+                    // Smooth scroll to selected student
+                    selectedStudent.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                });
+            });
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Razorpay Integration
+        let currentStudentId = null;
+        let currentStudentData = null;
+
+        // Payment button click handler
+        document.getElementById('payButton').addEventListener('click', function() {
+            if (!currentStudentId) {
+                alert('Please select a student first');
+                return;
+            }
+
+            document.getElementById('loadingText').style.display = 'block';
+            
+            // Create payment order
+            fetch('/create-payment/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                },
+                body: JSON.stringify({
+                    student_id: currentStudentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Initialize Razorpay
+                    const options = {
+                        key: data.razorpay_key_id,
+                        amount: data.razorpay_amount,
+                        currency: data.razorpay_currency,
+                        name: "FDS Payment Portal",
+                        description: `Payment for ${currentStudentData.name}`,
+                        order_id: data.razorpay_order_id,
+                        handler: function(response) {
+                            // Redirect to success page
+                            window.location.href = `/payment-success/?payment_id=${data.payment_id}&razorpay_payment_id=${response.razorpay_payment_id}`;
+                        },
+                        prefill: {
+                            name: currentStudentData.name,
+                            email: currentStudentData.email,
+                            contact: currentStudentData.phone
+                        },
+                        theme: {
+                            color: "#3498db"
+                        }
+                    };
+                    
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                } else {
+                    alert('Error creating payment: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error processing payment');
+            })
+            .finally(() => {
+                document.getElementById('loadingText').style.display = 'none';
+            });
+        });
+    });
+    </script>
+</body>
+</html>

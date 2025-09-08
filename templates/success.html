@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Payment Successful - FDS Payment Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #000000;
+            --foreground: #ffffff;
+            
+            --card: #1c1c1c;
+            --card-foreground: #ffffff;
+            
+            --popover: #1c1c1c;
+            --popover-foreground: #ffffff;
+            
+            --primary: #ffffff;
+            --primary-foreground: #000000;
+            
+            --secondary: #1c1c1c;
+            --secondary-foreground: #ffffff;
+            
+            --muted: #26252a;
+            --muted-foreground: #a1a1aa;
+            
+            --accent: #8a8a91;
+            --accent-foreground: #ffffff;
+            
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            
+            --border: #26252a;
+            --input: #26252a;
+            --ring: #ffffff;
+            
+            --radius: 0.75rem;
+            --glow: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            height: 100vh;
+            color: var(--foreground);
+            line-height: 1.4;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 500px; 
+            max-height: 90vh;
+            width: 100%;
+            background: linear-gradient(135deg, var(--card), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: clamp(20px, 4vw, 32px);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 20px 25px -5px rgba(0, 0, 0, 0.3),
+                0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            animation: containerSlideIn 0.6s ease-out;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+
+        @keyframes containerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+
+
+        h1 { 
+            font-size: clamp(1.5rem, 6vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: clamp(8px, 2vw, 12px);
+            background: linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShimmer 3s ease-in-out infinite, titleSlideIn 0.8s ease-out 0.4s both;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--muted-foreground);
+            margin-bottom: clamp(16px, 3vw, 24px);
+            animation: subtitleFadeIn 0.8s ease-out 0.6s both;
+            line-height: 1.4;
+        }
+
+        @keyframes titleShimmer {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes titleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes subtitleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .details {
+            background: linear-gradient(135deg, var(--muted), var(--secondary));
+            padding: clamp(16px, 3vw, 24px);
+            border-radius: 16px;
+            margin: clamp(12px, 3vw, 20px) 0;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+            animation: detailsSlideIn 0.8s ease-out 0.8s both;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 6px 24px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .details::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #10b981, #059669);
+            animation: accentSlideIn 1s ease-out 1s both;
+        }
+
+        .details::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        @keyframes detailsSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes accentSlideIn {
+            from {
+                height: 0;
+            }
+            to {
+                height: 100%;
+            }
+        }
+
+        .details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details p {
+            margin: 8px 0;
+            font-size: 13px;
+            color: var(--muted-foreground);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details strong {
+            color: var(--foreground);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .email-notice {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 20px);
+            border-radius: 12px;
+            margin: clamp(12px, 3vw, 20px) 0;
+            color: #6ee7b7;
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 2vw, 12px);
+            animation: noticeSlideIn 0.8s ease-out 1.2s both;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .email-notice::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .email-notice i {
+            font-size: 16px;
+            color: #10b981;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+
+        .back-button { 
+            display: inline-flex;
+            align-items: center;
+            gap: clamp(6px, 1.5vw, 10px);
+            margin-top: clamp(16px, 3vw, 24px); 
+            padding: clamp(10px, 2.5vw, 14px) clamp(20px, 4vw, 28px); 
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            color: #1a1a1a;
+            text-decoration: none; 
+            border-radius: 10px; 
+            font-weight: 600;
+            font-size: clamp(13px, 2.5vw, 15px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 3px 10px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.05);
+            animation: buttonSlideIn 0.8s ease-out 1.4s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .back-button:hover { 
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.15),
+                0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover::before {
+            left: 100%;
+        }
+
+        .back-button i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover i {
+            transform: translateX(-2px);
+        }
+
+        @keyframes noticeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes buttonSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .container {
+                margin: 0;
+                padding: clamp(16px, 3vw, 24px);
+                border-radius: 16px;
+                max-width: 100%;
+                max-height: 100vh;
+            }
+
+
+            .details h3 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .details p {
+                font-size: 12px;
+                margin: 6px 0;
+            }
+
+            .email-notice {
+                flex-direction: column;
+                text-align: center;
+                gap: 6px;
+                padding: clamp(10px, 2vw, 14px);
+            }
+
+            .email-notice i {
+                font-size: 14px;
+            }
+
+            .back-button {
+                width: 100%;
+                justify-content: center;
+                height: 60px;
+                padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 6px;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .container {
+                padding: clamp(12px, 3vw, 20px);
+                border-radius: 14px;
+                max-height: 98vh;
+            }
+
+
+            .details {
+                padding: clamp(12px, 3vw, 16px);
+            }
+
+            .email-notice {
+                padding: clamp(8px, 2vw, 12px);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Successful!</h1>
+        <p class="subtitle">Thank you for your payment. The receipt has been generated and recorded in our system.</p>
+        <p class="subtitle">For any enquiries, contact us at <a href="tel:+917994631745">+91 7994631745</a></p>
+        {% if payment_id %}
+        <div class="details">
+            <h3>
+                <i class="fa-solid fa-receipt"></i>
+                Payment Details
+            </h3>
+            <p>
+                <strong>Payment ID:</strong> 
+                <span>{{ payment_id }}</span>
+            </p>
+            {% if razorpay_payment_id %}
+            <p>
+                <strong>Transaction ID:</strong> 
+                <span>{{ razorpay_payment_id }}</span>
+            </p>
+            {% endif %}
+            <p>
+                <strong>Status:</strong> 
+                <span class="status-badge">Completed</span>
+            </p>
+            <p>
+                <strong>Amount:</strong> 
+                <span class="amount">₹1,500</span>
+            </p>
+        </div>
+        {% endif %}
+        
+        <div class="email-notice">
+            
+            <span>We will not share your personal information and transaction details with any third party.</span>
+        </div>
+        
+        
+            
+            <button onclick="downloadReceipt()" class="download-button">
+                <i class="fa-solid fa-download"></i>
+                Download Receipt
+            
+        </button>
+        <style>
+            .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: clamp(16px, 3vw, 24px);
+    animation: buttonSlideIn 0.8s ease-out 1.4s both;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.download-button { 
+    display: inline-flex;
+    align-items: center;
+    height: 50px;
+    margin-top: 20px;
+    gap: clamp(6px, 1.5vw, 10px);
+    padding: clamp(10px, 2.5vw, 14px) clamp(20px, 4vw, 28px); 
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 10px; 
+    font-weight: 600;
+    font-size: clamp(13px, 2.5vw, 15px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 
+        0 3px 10px rgba(16, 185, 129, 0.3),
+        0 2px 4px rgba(16, 185, 129, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.download-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.download-button:hover { 
+    background: linear-gradient(135deg, #059669, #10b981);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(16, 185, 129, 0.4),
+        0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.download-button:hover::before {
+    left: 100%;
+}
+
+.download-button i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.download-button:hover i {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .download-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        
+        <script>
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+        
+            function downloadReceipt() {
+                // Show loading state
+                const downloadBtn = document.querySelector('.download-button');
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF...';
+                downloadBtn.disabled = true;
+        
+                // Create a clean, professional PDF
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                // Header with gradient effect
+                pdf.setFillColor(16, 185, 129);
+                pdf.rect(0, 0, pdfWidth, 40, 'F');
+                
+                // Company name
+                pdf.setFontSize(24);
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('FDS PAYMENT PORTAL', pdfWidth / 2, 25, { align: 'center' });
+                
+                // Receipt title
+                pdf.setFillColor(245, 245, 245);
+                pdf.rect(20, 50, pdfWidth - 40, 20, 'F');
+                pdf.setFontSize(18);
+                pdf.setTextColor(16, 185, 129);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('PAYMENT RECEIPT', pdfWidth / 2, 63, { align: 'center' });
+                
+                // Receipt details box
+                const boxY = 80;
+                const boxHeight = 100;
+                pdf.setDrawColor(16, 185, 129);
+                pdf.setLineWidth(0.5);
+                pdf.rect(20, boxY, pdfWidth - 40, boxHeight);
+                
+                // Details content
+                let yPosition = boxY + 15;
+                const details = [
+                    { label: 'Payment ID', value: '{{ payment_id }}' },
+                    { label: 'Transaction ID', value: '{{ razorpay_payment_id }}' },
+                    { label: 'Status', value: 'COMPLETED' },
+                    { label: 'Amount', value: 'RS 2,000.00' },
+                    { label: 'Date', value: new Date().toLocaleDateString('en-IN', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    }) },
+                    { label: 'Time', value: new Date().toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    }) }
+                ];
+                
+                details.forEach(({ label, value }) => {
+                    if (value) {
+                        // Label
+                        pdf.setFontSize(11);
+                        pdf.setTextColor(100, 100, 100);
+                        pdf.setFont(undefined, 'normal');
+                        pdf.text(`${label}:`, 30, yPosition);
+                        
+                        // Value
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.setFont(undefined, 'bold');
+                        pdf.text(value, 80, yPosition);
+                        
+                        yPosition += 12;
+                    }
+                });
+                
+                // Success message
+                pdf.setFontSize(14);
+                pdf.setTextColor(16, 185, 129);
+                pdf.setFont(undefined, 'bold');
+                
+                
+                // Thank you message
+                pdf.setFontSize(12);
+                pdf.setTextColor(100, 100, 100);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('Thank you for your payment. This receipt has been generated', pdfWidth / 2, 215, { align: 'center' });
+                pdf.text('and recorded in our system.', pdfWidth / 2, 225, { align: 'center' });
+
+                // Footer
+                pdf.setDrawColor(200, 200, 200);
+                pdf.line(20, pdfHeight - 30, pdfWidth - 20, pdfHeight - 30);
+                
+                pdf.setFontSize(9);
+                pdf.setTextColor(150, 150, 150);
+                pdf.text('This is a computer-generated receipt and does not require a signature.', pdfWidth / 2, pdfHeight - 20, { align: 'center' });
+                
+                
+                // Add decorative border
+                pdf.setDrawColor(16, 185, 129);
+                pdf.setLineWidth(1);
+                pdf.rect(10, 10, pdfWidth - 20, pdfHeight - 20);
+                
+                // Save PDF
+                pdf.save(`payment-receipt-{{ payment_id }}.pdf`);
+                
+                // Restore button state
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }
+        </script>
+    </div>
+</body>
+</html>

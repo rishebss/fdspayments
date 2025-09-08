@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "payments/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "300mb",
+        "runtime": "python3.12"
+      }
+    },
+    {
+      "src": "build_files.sh",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "static"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "payments/wsgi.py"
+    }
+  ],
+  "outputDirectory": "static"
+}

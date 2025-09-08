@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Failed - FIFAC CRM</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-icon { 
+            font-size: 60px; 
+            color: #e74c3c; 
+            margin-bottom: 20px;
+        }
+        h1 { 
+            color: #e74c3c; 
+            margin-bottom: 20px;
+        }
+        a { 
+            display: inline-block; 
+            margin-top: 20px; 
+            padding: 12px 25px; 
+            background: #3498db; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            transition: background-color 0.3s;
+        }
+        a:hover { 
+            background: #2980b9; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">❌</div>
+        <h1>Payment Failed</h1>
+        
+        <p>There was an issue processing your payment. This could be due to:</p>
+        <ul style="text-align: left; display: inline-block;">
+            <li>Insufficient funds in your account</li>
+            <li>Network connectivity issues</li>
+            <li>Payment cancellation</li>
+            <li>Bank transaction decline</li>
+        </ul>
+        
+        <p>Please try again or contact your bank if the issue persists.</p>
+        
+        {% if payment_id %}
+        <p><small>Reference ID: {{ payment_id }}</small></p>
+        {% endif %}
+        
+        <a href="/">🔄 Try again</a>
+    </div>
+</body>
+</html>
